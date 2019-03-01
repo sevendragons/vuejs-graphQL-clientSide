@@ -1,0 +1,15 @@
+{
+  "name": "vue-graphQL-client-side",
+  "type": "static",
+  "static": {
+    "public": "dist",
+    "rewrites": [{
+      "source": "**",
+      "destination": "/index.html"
+    }]
+  },
+  "alias": "vue-example",
+  "files": [
+    "dist"
+  ]
+}
