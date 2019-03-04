@@ -68,9 +68,27 @@
             <v-btn @click="loadPost(post)" color="info" floating fab small dark>
               <v-icon>edit</v-icon>
             </v-btn>
-            <v-btn @click="handleDeleteUserPost(post)" color="error" floating fab small dark>
+            <v-btn @click="loadDelete()" color="error" floating fab small dark>
               <v-icon>delete</v-icon>
             </v-btn>
+
+            <!-- dialog delete post -->
+            <v-form v-model="isFormValid" lazy-validation ref="form" @submit.prevent="handleDeleteUserPost(post)">
+              <v-layout row justify-center>
+                <v-dialog v-model="deletePost" persistent max-width="290">
+                  <v-card>
+                    <v-card-title class="headline">Are you sure 🤫 😕 ⛩?</v-card-title>
+                    <v-card-text>To delete this boring post, and even you dont what is it 🏎 🏈 ⚽️.</v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="green darken-1" flat @click="deletePost = false">Disagree</v-btn>
+                      <v-btn color="green darken-1" v-model="deleteAgree" flat type="submit">Agree</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-layout>
+            </v-form>  
+            <!-- end -->
 
             <v-img @click="goToPost(post._id)" height="40vh" :src="post.imageUrl"></v-img>
             <v-card-text><strong>{{post.title}}</strong></v-card-text>
@@ -82,7 +100,9 @@
     <!-- Edit Post Dialog -->
     <v-dialog xs12 sm6 offset-sm3 persistent v-model="editPostDialog">
       <v-card>
-        <v-card-title class="headline primary2 lighten-2">Update Post</v-card-title>
+        <v-card-title class="headline primary2 lighten-2">Update Post  
+          <v-icon large @click="editPostDialog = false" class="cancel" color="primary3">cancel</v-icon>
+        </v-card-title>
         <v-container>
           <v-form v-model="isFormValid" lazy-validation ref="form" @submit.prevent="handleUpdateUserPost">
 
@@ -150,6 +170,8 @@
     data() {
       return {
         editPostDialog: false,
+        deletePost: false,
+        deleteAgree: false,
         isFormValid: true,
         title: "",
         imageUrl: "",
@@ -201,16 +223,20 @@
           this.editPostDialog = false
         }
       },
-      handleDeleteUserPost(post) {
+      handleDeleteUserPost(post, deletePost = true) {
         this.loadPost(post, false);
-        const deletePost = window.confirm(
-          "Are you sure you want to delete this post? 👌 😒"
-        );
+        // const deletePost = window.confirm(
+        //   "Are you sure you want to delete this post? 👌 😒"
+        // );
+        // let deleteAgree = true;
         if (deletePost) {
           this.$store.dispatch("deleteUserPost", {
             postId: this.postId
           })
         }
+      },
+      loadDelete(deletePost = true) {
+        this.deletePost = deletePost;
       },
       loadPost(
         {_id, title, imageUrl, categories, description},
@@ -233,5 +259,13 @@
   h2, .headline {
     color: whitesmoke;
     margin-top: 16px  
+  }
+   .cancel{
+    z-index: 999;
+    background-color: white;
+    border-radius: 100%; 
+    position: absolute;
+    right: 12px;
+    top: 12px
   }
 </style>
